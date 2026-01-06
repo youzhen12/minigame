@@ -21,6 +21,7 @@ const fallback=[
 ]
 function shortestSteps(cups,target){const start=cups.map(c=>c.fill);const caps=cups.map(c=>c.cap);if(start.some(v=>v===target))return 0;const seen=new Set([key(start)]);let q=[start];let steps=0;while(q.length){steps++;const nq=[];for(let i=0;i<q.length;i++){const cur=q[i];for(let s=0;s<cups.length;s++){for(let t=0;t<cups.length;t++){if(s===t)continue;const a=cur[s];const b=cur[t];const space=caps[t]-b;const move=Math.min(a,space);if(move<=0)continue;const nxt=cur.slice();nxt[s]-=move;nxt[t]+=move;const k=key(nxt);if(!seen.has(k)){if(nxt.some(v=>v===target))return steps;seen.add(k);nq.push(nxt)}}}}q=nq}return -1}
 levels=levels.filter(l=>shortestSteps(l.cups,l.target)>=0).concat(fallback.filter(l=>shortestSteps(l.cups,l.target)>=0)).slice(0,10)
+if(levels.length===0){levels=[{cups:[{cap:7,fill:7},{cap:5,fill:0},{cap:3,fill:0}],target:4}]}
 const elCups=document.getElementById('cups')
 const elLevel=document.getElementById('level')
 const elTarget=document.getElementById('target')
@@ -36,7 +37,7 @@ const elSolvable=document.getElementById('solvable')
 const elOptimal=document.getElementById('optimal')
 let state={}
 function clone(v){return JSON.parse(JSON.stringify(v))}
-function setup(i){state={level:i,steps:0,history:[],selected:null,completed:false,init:clone(levels[i]),cups:clone(levels[i].cups),target:levels[i].target}
+function setup(i){if(!levels[i])i=0;state={level:i,steps:0,history:[],selected:null,completed:false,init:clone(levels[i]),cups:clone(levels[i].cups),target:levels[i].target}
 state.shortest=shortestSteps(state.cups,state.target);state.solvable=state.shortest>=0
 render()
 }
