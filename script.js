@@ -1,5 +1,5 @@
-const levels=[
-{cups:[{cap:5,fill:5},{cap:3,fill:0}],target:4},
+let levels=[
+{cups:[{cap:7,fill:7},{cap:5,fill:0},{cap:3,fill:0}],target:4},
 {cups:[{cap:8,fill:8},{cap:5,fill:0},{cap:3,fill:0}],target:4},
 {cups:[{cap:6,fill:6},{cap:4,fill:0},{cap:2,fill:0}],target:2},
 {cups:[{cap:7,fill:7},{cap:5,fill:0},{cap:3,fill:0}],target:4},
@@ -10,6 +10,16 @@ const levels=[
 {cups:[{cap:9,fill:0},{cap:5,fill:5},{cap:4,fill:4}],target:7},
 {cups:[{cap:7,fill:7},{cap:6,fill:0},{cap:5,fill:0},{cap:3,fill:0}],target:2}
 ]
+function key(fs){return fs.join(',')}
+function canReachTarget(cups,target){const start=cups.map(c=>c.fill);const caps=cups.map(c=>c.cap);const q=[start];const seen=new Set([key(start)]);while(q.length){const cur=q.shift();if(cur.some(v=>v===target))return true;for(let s=0;s<cups.length;s++){for(let t=0;t<cups.length;t++){if(s===t)continue;const a=cur[s];const b=cur[t];const space=caps[t]-b;const move=Math.min(a,space);if(move<=0)continue;const nxt=cur.slice();nxt[s]-=move;nxt[t]+=move;const k=key(nxt);if(!seen.has(k)){seen.add(k);q.push(nxt)}}} }return false}
+const fallback=[
+{cups:[{cap:5,fill:5},{cap:4,fill:0},{cap:1,fill:0}],target:4},
+{cups:[{cap:9,fill:9},{cap:5,fill:0},{cap:4,fill:0}],target:7},
+{cups:[{cap:8,fill:8},{cap:6,fill:0},{cap:2,fill:0}],target:4},
+{cups:[{cap:11,fill:11},{cap:7,fill:0},{cap:4,fill:0}],target:9},
+{cups:[{cap:10,fill:10},{cap:6,fill:0},{cap:4,fill:0}],target:2}
+]
+levels=levels.filter(l=>canReachTarget(l.cups,l.target)).concat(fallback.filter(l=>canReachTarget(l.cups,l.target))).slice(0,10)
 const elCups=document.getElementById('cups')
 const elLevel=document.getElementById('level')
 const elTarget=document.getElementById('target')
